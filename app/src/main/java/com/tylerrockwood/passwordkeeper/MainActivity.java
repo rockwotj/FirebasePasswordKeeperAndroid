@@ -12,7 +12,7 @@ import com.firebase.client.FirebaseError;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginListener, Firebase.AuthResultHandler, PasswordFragment.OnLogoutListener {
 
-    public static final String FIREBASE_URL = "https://passwordkeeper.firebaseio.com/";
+    public static final String FIREBASE_URL = "https://<YOUR USERNAME HERE>-passwordkeeper.firebaseio.com/";
     public static final String USER_ID = "USER_ID";
 
     @Override
