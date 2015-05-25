@@ -2,7 +2,9 @@ package com.tylerrockwood.passwordkeeper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -17,6 +19,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import java.net.URI;
 
 
 /**
@@ -148,7 +152,8 @@ public class LoginFragment extends Fragment {
     }
 
     public void signup() {
-
+        Intent signupIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.FIREBASE_WEBSITE));
+        startActivity(signupIntent);
     }
 
     private boolean isEmailValid(String email) {
