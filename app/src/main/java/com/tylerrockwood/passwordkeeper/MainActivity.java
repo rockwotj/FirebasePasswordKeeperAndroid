@@ -58,19 +58,17 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
     @Override
     public void onLogout() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.remove(getSupportFragmentManager().findFragmentByTag("Passwords"));
-        ft.add(R.id.fragment, new LoginFragment(), "Login");
+        ft.replace(R.id.fragment, new LoginFragment(), "Login");
         ft.commit();
     }
 
     private void switchToPasswordFragment(String userId) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.remove(getSupportFragmentManager().findFragmentByTag("Login"));
         Fragment passwordFragment = new PasswordFragment();
         Bundle args = new Bundle();
         args.putString(USER_ID, userId);
         passwordFragment.setArguments(args);
-        ft.add(R.id.fragment, passwordFragment, "Passwords");
+        ft.replace(R.id.fragment, passwordFragment, "Passwords");
         ft.commit();
     }
 }
