@@ -38,6 +38,7 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
         super.onCreate(savedInstanceState);
         String userId = getArguments().getString(MainActivity.USER_ID);
         mPasswordKeeper = new Firebase(MainActivity.FIREBASE_URL + "/users/" + userId);
+        mPasswordKeeper.keepSynced(true);
     }
 
     @Override

@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Firebase.setAndroidContext(this);
+        Firebase.getDefaultConfig().enablePersistence();
         Firebase passwordKeeperRef = new Firebase(FIREBASE_URL);
         if (passwordKeeperRef.getAuth() == null){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
