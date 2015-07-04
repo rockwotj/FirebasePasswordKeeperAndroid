@@ -22,9 +22,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Firebase.setAndroidContext(this);
-        Firebase.getDefaultConfig().enablePersistence();
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase passwordKeeperRef = new Firebase(FIREBASE_URL);
-        if (passwordKeeperRef.getAuth() == null){
+        if (passwordKeeperRef.getAuth() == null || authExpired(passwordKeeperRef.getAuth())){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.fragment, new LoginFragment(), "Login");
             ft.commit();
@@ -37,6 +37,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
             ft.add(R.id.fragment, passwordFragment, "Passwords");
             ft.commit();
         }
+    }
+
+    private boolean authExpired(AuthData auth) {
+        long timeWhenExpired = auth.getExpires() * 1000L;
+        long currentTime = System.currentTimeMillis();
+        return currentTime > timeWhenExpired;
     }
 
     @Override
