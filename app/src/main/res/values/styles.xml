@@ -2,7 +2,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorControlNormal">#ffffff</item>
-        <item name="colorAccent">@color/primary</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimary">@color/primary</item>
         <item name="colorControlActivated">@color/accent</item>
         <item name="colorControlHighlight">@color/accent</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
@@ -20,11 +21,11 @@
     </style>
 
     <style name="DialogEditText"  parent="android:Widget.EditText">
-        <item name="colorControlNormal">@color/primary</item>
-        <item name="colorAccent">@color/primary</item>
-        <item name="android:colorActivatedHighlight">@color/primary</item>
-        <item name="colorControlActivated">@color/primary</item>
-        <item name="colorControlHighlight">@color/primary</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:colorActivatedHighlight">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textCursorDrawable">@null</item>
     </style>

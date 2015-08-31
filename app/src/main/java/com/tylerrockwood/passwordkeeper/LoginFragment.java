@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.common.SignInButton;
 
 import java.net.URI;
 
@@ -34,6 +35,7 @@ public class LoginFragment extends Fragment {
     private View mProgressSpinner;
     private boolean mLoggingIn;
     private OnLoginListener mListener;
+    private SignInButton mGoogleSignInButton;
 
     public LoginFragment() {
     }
@@ -53,6 +55,7 @@ public class LoginFragment extends Fragment {
         mLoginForm = rootView.findViewById(R.id.login_form);
         mProgressSpinner = rootView.findViewById(R.id.login_progress);
         View loginButton = rootView.findViewById(R.id.email_sign_in_button);
+        mGoogleSignInButton = (SignInButton) rootView.findViewById(R.id.google_sign_in_button);
         TextView signUpView = (TextView) rootView.findViewById(R.id.signUpTextView);
         signUpView.setPaintFlags(signUpView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         Linkify.addLinks(signUpView, Linkify.ALL);
@@ -88,8 +91,30 @@ public class LoginFragment extends Fragment {
                 login();
             }
         });
+        mGoogleSignInButton.setColorScheme(SignInButton.COLOR_LIGHT);
+        mGoogleSignInButton.setSize(SignInButton.SIZE_WIDE);
+        mGoogleSignInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginWithGoogle();
+            }
+        });
         return rootView;
     }
+
+    private void loginWithGoogle() {
+        if (mLoggingIn) {
+            return;
+        }
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
+        showProgress(true);
+        mLoggingIn = true;
+        mListener.onGoogleLogin();
+        hideKeyboard();
+    }
+
 
     public void login() {
         if (mLoggingIn) {
@@ -129,11 +154,14 @@ public class LoginFragment extends Fragment {
             showProgress(true);
             mLoggingIn = true;
             mListener.onLogin(email, password);
-
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mEmailView.getWindowToken(), 0);
+            hideKeyboard();
         }
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEmailView.getWindowToken(), 0);
     }
 
     public void onLoginError(String message) {
@@ -141,14 +169,16 @@ public class LoginFragment extends Fragment {
                 .title(getActivity().getString(R.string.login_error))
                 .content(message)
                 .positiveText(android.R.string.ok)
+                .positiveColorRes(R.color.primary)
                 .show();
         showProgress(false);
         mLoggingIn = false;
     }
 
-    private void showProgress(final boolean show) {
+    private void showProgress(boolean show) {
         mProgressSpinner.setVisibility(show ? View.VISIBLE : View.GONE);
         mLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        mGoogleSignInButton.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     public void signup() {
@@ -166,6 +196,7 @@ public class LoginFragment extends Fragment {
 
     public interface OnLoginListener {
         void onLogin(String email, String password);
+        void onGoogleLogin();
     }
 
     @Override

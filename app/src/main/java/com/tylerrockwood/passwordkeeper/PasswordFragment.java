@@ -97,6 +97,8 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                 .negativeText(android.R.string.cancel)
                 .positiveText(R.string.save)
                 .widgetColorRes(R.color.primary)
+                .negativeColorRes(R.color.primary)
+                .positiveColorRes(R.color.primary)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -151,6 +153,8 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                 .negativeText(android.R.string.cancel)
                 .positiveText(R.string.add)
                 .widgetColorRes(R.color.primary)
+                .negativeColorRes(R.color.primary)
+                .positiveColorRes(R.color.primary)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
