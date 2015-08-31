@@ -102,10 +102,13 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        mAdapter.update(password.getKey(),
-                                serviceView.getText().toString(),
-                                usernameView.getText().toString(),
-                                passwordView.getText().toString());
+                        password.setService(serviceView.getText().toString());
+                        password.setPassword(passwordView.getText().toString());
+                        if (!usernameView.getText().toString().isEmpty())
+                            password.setUsername(usernameView.getText().toString());
+                        else
+                            password.setUsername(null);
+                        mAdapter.update(password);
                     }
                 })
                 .build();
@@ -113,10 +116,13 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_NULL) {
-                    mAdapter.update(password.getKey(),
-                            serviceView.getText().toString(),
-                            usernameView.getText().toString(),
-                            passwordView.getText().toString());
+                    password.setService(serviceView.getText().toString());
+                    password.setPassword(passwordView.getText().toString());
+                    if (!usernameView.getText().toString().isEmpty())
+                        password.setUsername(usernameView.getText().toString());
+                    else
+                        password.setUsername(null);
+                    mAdapter.update(password);
                     dialog.dismiss();
                     return true;
                 }
@@ -158,18 +164,22 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
-                        mAdapter.add(serviceView.getText().toString(),
+                        Password pw = new Password(
                                 usernameView.getText().toString(),
-                                passwordView.getText().toString());
+                                passwordView.getText().toString(),
+                                serviceView.getText().toString());
+                        mAdapter.add(pw);
                     }
                 }).build();
         passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if(id == EditorInfo.IME_NULL) {
-                    mAdapter.add(serviceView.getText().toString(),
+                    Password pw = new Password(
                             usernameView.getText().toString(),
-                            passwordView.getText().toString());
+                            passwordView.getText().toString(),
+                            serviceView.getText().toString());
+                    mAdapter.add(pw);
                     dialog.dismiss();
                     return true;
                 }

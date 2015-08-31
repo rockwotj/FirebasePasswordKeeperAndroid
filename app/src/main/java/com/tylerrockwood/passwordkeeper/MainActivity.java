@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             Firebase.setAndroidContext(this);
-            Firebase.getDefaultConfig().setPersistenceEnabled(true);
+            if (!Firebase.getDefaultConfig().isPersistenceEnabled()) {
+                Firebase.getDefaultConfig().setPersistenceEnabled(true);
+            }
         }
         Firebase passwordKeeperRef = new Firebase(FIREBASE_URL);
         mGoogleApiClient = new GoogleApiClient.Builder(this)

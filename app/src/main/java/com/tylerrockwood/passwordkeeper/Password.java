@@ -1,14 +1,20 @@
 package com.tylerrockwood.passwordkeeper;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Password {
 
     private String key;
-    private String service;
-    private String username;
-    private String password;
+    String service;
+    String username;
+    String password;
+
+
+    Password() {
+        this(null, null, null);
+    }
+
+    public Password(String username, String password, String service) {
+        this(null, username, password, service);
+    }
 
     public Password(String key, String username, String password, String service) {
         this.key = key;
@@ -43,5 +49,9 @@ public class Password {
 
     public String getKey() {
         return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

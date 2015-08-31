@@ -68,22 +68,12 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
         return mPasswords.size();
     }
 
-    public void add(String service, String username, String password) {
-        Map<String, Object> json = new HashMap<>(3);
-        json.put("service", service);
-        if (!username.isEmpty())
-            json.put("username", username);
-        json.put("password", password);
-        mPasswordKeeper.push().setValue(json);
+    public void add(Password pw) {
+        mPasswordKeeper.push().setValue(pw);
     }
 
-    public void update(String key, String service, String username, String password) {
-        Map<String, Object> json = new HashMap<>(3);
-        json.put("service", service);
-        if (!username.isEmpty())
-            json.put("username", username);
-        json.put("password", password);
-        mPasswordKeeper.child(key).updateChildren(json);
+    public void update(Password pw) {
+        mPasswordKeeper.child(pw.getKey()).setValue(pw);
     }
 
     private void remove(int position) {
@@ -111,10 +101,9 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
         String key = dataSnapshot.getKey();
-        String service = dataSnapshot.child("service").getValue(String.class);
-        String username = dataSnapshot.child("username").getValue(String.class);
-        String password = dataSnapshot.child("password").getValue(String.class);
-        mPasswords.add(0, new Password(key, username, password, service));
+        Password pw = dataSnapshot.getValue(Password.class);
+        pw.setKey(key);
+        mPasswords.add(0, pw);
         notifyItemInserted(0);
     }
 
