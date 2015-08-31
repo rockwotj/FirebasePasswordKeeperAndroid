@@ -104,10 +104,8 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                     public void onPositive(MaterialDialog dialog) {
                         password.setService(serviceView.getText().toString());
                         password.setPassword(passwordView.getText().toString());
-                        if (!usernameView.getText().toString().isEmpty())
-                            password.setUsername(usernameView.getText().toString());
-                        else
-                            password.setUsername(null);
+                        String username = usernameView.getText().toString();
+                        password.setUsername(username.isEmpty() ? null : username);
                         mAdapter.update(password);
                     }
                 })
@@ -118,10 +116,8 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                 if (id == EditorInfo.IME_NULL) {
                     password.setService(serviceView.getText().toString());
                     password.setPassword(passwordView.getText().toString());
-                    if (!usernameView.getText().toString().isEmpty())
-                        password.setUsername(usernameView.getText().toString());
-                    else
-                        password.setUsername(null);
+                    String username = usernameView.getText().toString();
+                    password.setUsername(username.isEmpty() ? null : username);
                     mAdapter.update(password);
                     dialog.dismiss();
                     return true;
