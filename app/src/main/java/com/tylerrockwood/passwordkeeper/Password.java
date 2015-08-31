@@ -1,16 +1,17 @@
 package com.tylerrockwood.passwordkeeper;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Password {
 
+    @JsonIgnore
     private String key;
-    String service;
-    String username;
-    String password;
+    private String service;
+    private String username;
+    private String password;
 
 
-    Password() {
-        this(null, null, null);
-    }
+    Password() {}
 
     public Password(String username, String password, String service) {
         this(null, username, password, service);
