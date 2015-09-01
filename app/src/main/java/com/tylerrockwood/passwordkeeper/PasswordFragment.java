@@ -36,9 +36,8 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String userId = getArguments().getString(MainActivity.USER_ID);
-        mPasswordKeeper = new Firebase(MainActivity.FIREBASE_URL + "/users/" + userId);
-        mPasswordKeeper.keepSynced(true);
+        String firebaseUrl = getArguments().getString(MainActivity.FIREBASE);
+        mPasswordKeeper = new Firebase(firebaseUrl);
     }
 
     @Override
@@ -134,7 +133,6 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
         switch (id) {
             case R.id.action_logout:
                 Log.d("PK", "LOGOUT Menu Item Clicked!");
-                mPasswordKeeper.unauth();
                 mListener.onLogout();
                 return true;
         }
