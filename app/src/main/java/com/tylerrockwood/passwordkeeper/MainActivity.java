@@ -35,6 +35,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         //TODO: Log user in with Google Account
     }
 
+    private void onGoogleLogin(String oAuthToken) {
+        //TODO: Log user in with Google OAuth Token
+    }
+
     @Override
     public void onLogout() {
         //TODO: Log user out
