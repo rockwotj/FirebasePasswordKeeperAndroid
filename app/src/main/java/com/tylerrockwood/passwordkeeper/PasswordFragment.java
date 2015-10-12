@@ -159,9 +159,11 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         Password pw = new Password(
-                                usernameView.getText().toString(),
+                                null,
                                 passwordView.getText().toString(),
                                 serviceView.getText().toString());
+                        String username = usernameView.getText().toString();
+                        pw.setUsername(username.isEmpty() ? null : username);
                         mAdapter.add(pw);
                     }
                 }).build();
@@ -170,9 +172,11 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if(id == EditorInfo.IME_NULL) {
                     Password pw = new Password(
-                            usernameView.getText().toString(),
+                            null,
                             passwordView.getText().toString(),
                             serviceView.getText().toString());
+                    String username = usernameView.getText().toString();
+                    pw.setUsername(username.isEmpty() ? null : username);
                     mAdapter.add(pw);
                     dialog.dismiss();
                     return true;
