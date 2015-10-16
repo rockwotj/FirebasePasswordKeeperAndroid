@@ -10,7 +10,7 @@ import com.firebase.client.Firebase;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginListener, PasswordFragment.OnLogoutListener {
 
-    public static final String FIREBASE_REPO = "<YOUR USERNAME HERE>-passwordkeeper";
+    public static final String FIREBASE_REPO = "passwordkeeper";
     public static final String FIREBASE_WEBSITE = "https://" + FIREBASE_REPO + ".firebaseapp.com/";
     public static final String FIREBASE_URL = "https://" + FIREBASE_REPO + ".firebaseio.com/";
     public static final String FIREBASE = "FIREBASE";
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         if (savedInstanceState == null) {
             Firebase.setAndroidContext(this);
         }
+        Firebase repo = new Firebase(FIREBASE_URL);
         switchToPasswordFragment(FIREBASE_URL);
     }
 
@@ -41,7 +42,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
 
     @Override
     public void onLogout() {
-        //TODO: Log user out
+        new Firebase(FIREBASE_URL).unauth();
+        switchToLoginFragment();
     }
 
     // MARK: Provided Helper Methods
