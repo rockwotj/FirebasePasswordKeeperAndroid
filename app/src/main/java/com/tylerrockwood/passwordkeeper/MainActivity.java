@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         if (savedInstanceState == null) {
             Firebase.setAndroidContext(this);
         }
-        Firebase repo = new Firebase(FIREBASE_URL);
         switchToPasswordFragment(FIREBASE_URL);
     }
 
@@ -42,8 +41,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
 
     @Override
     public void onLogout() {
-        new Firebase(FIREBASE_URL).unauth();
-        switchToLoginFragment();
+        //TODO: Log the user out.
     }
 
     // MARK: Provided Helper Methods
