@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
 
     @Override
     public void onLogout() {
-        new Firebase(FIREBASE_URL).unauth();
-        switchToLoginFragment();
+        //TODO: Log user out
     }
 
     // MARK: Provided Helper Methods
