@@ -47,17 +47,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
                 .build();
         // Path doesn't matter for auth
         Firebase firebase = new Firebase(FIREBASE_URL);
-        if (firebase.getAuth() != null && !isExpired(firebase.getAuth())) {
+        if (firebase.getAuth() != null) {
             // Done: Use uid for user's data
             switchToPasswordFragment(FIREBASE_URL + "/users/" + firebase.getAuth().getUid());
         } else {
             switchToLoginFragment();
         }
-    }
-
-    private boolean isExpired(AuthData auth) {
-        // getExpires returns second since the epoch
-        return (auth.getExpires() * 1000) < System.currentTimeMillis();
     }
 
     @Override
