@@ -2,7 +2,6 @@ package com.tylerrockwood.passwordkeeper;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.Snackbar.Callback;
 import android.support.v4.app.Fragment;
@@ -142,7 +141,7 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
         passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if(id == EditorInfo.IME_NULL) {
+                if (id == EditorInfo.IME_NULL) {
                     Password pw = new Password(
                             null,
                             passwordView.getText().toString(),
@@ -161,6 +160,18 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
 
     public interface OnLogoutListener {
         void onLogout();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPasswordKeeper.removeEventListener(mAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPasswordKeeper.addChildEventListener(mAdapter);
     }
 
     @Override

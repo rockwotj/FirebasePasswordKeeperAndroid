@@ -40,7 +40,6 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
         mPasswords = new ArrayList<>();
         mInflator = LayoutInflater.from(context);
         mPasswordKeeper = firebaseRef;
-        mPasswordKeeper.addChildEventListener(this);
         mRandom = new Random();
         Resources r = context.getResources();
         mCollapsedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 56, r.getDisplayMetrics());
