@@ -24,7 +24,6 @@ import com.firebase.client.FirebaseError;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.PasswordView> implements ChildEventListener {
