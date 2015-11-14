@@ -2,10 +2,14 @@ package com.tylerrockwood.passwordkeeper;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.Snackbar.Callback;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,10 +22,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.client.Firebase;
-import com.hudomju.swipe.OnItemClickListener;
-import com.hudomju.swipe.SwipeToDismissTouchListener;
-import com.hudomju.swipe.SwipeableItemClickListener;
-import com.hudomju.swipe.adapter.RecyclerViewAdapter;
 
 public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClickListener, View.OnClickListener {
 
@@ -50,6 +50,8 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
         getActivity().getMenuInflater().inflate(R.menu.main, mToolbar.getMenu());
         mToolbar.setOnMenuItemClickListener(this);
         mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        final View fab = rootView.findViewById(R.id.fab_add);
+        fab.setOnClickListener(this);
         //Recycler View
         RecyclerView passwordList = (RecyclerView) rootView.findViewById(R.id.password_list);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -57,74 +59,43 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
         passwordList.setLayoutManager(manager);
         mAdapter = new PasswordAdapter(getActivity(), mPasswordKeeper);
         passwordList.setAdapter(mAdapter);
-        final SwipeToDismissTouchListener touchListener = new SwipeToDismissTouchListener(new RecyclerViewAdapter(passwordList), mAdapter);
-        passwordList.setOnTouchListener(touchListener);
-        passwordList.addOnScrollListener((RecyclerView.OnScrollListener) touchListener.makeScrollListener());
-        passwordList.addOnItemTouchListener(new SwipeableItemClickListener(getActivity(),
-                new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        if (view.getId() == R.id.txt_delete) {
-                            touchListener.processPendingDismisses();
-                        } else if (view.getId() == R.id.txt_undo) {
-                            touchListener.undoPendingDismiss();
-                        } else if (view.getId() == R.id.edit_button) {
-                            editPasswordAtPosition(position);
-                        } else {
-                            mAdapter.toggleCard(position);
-                        }
-                    }
-                }));
-        rootView.findViewById(R.id.fab_add).setOnClickListener(this);
-        return rootView;
-    }
-
-    private void editPasswordAtPosition(int position) {
-        final Password password = mAdapter.get(position);
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        final View contentView = inflater.inflate(R.layout.dialog_insert, null);
-        final EditText serviceView = (EditText) contentView.findViewById(R.id.service);
-        final EditText usernameView = (EditText) contentView.findViewById(R.id.username);
-        final EditText passwordView = (EditText) contentView.findViewById(R.id.password);
-        passwordView.setImeActionLabel("Save", EditorInfo.IME_NULL);
-        serviceView.setText(password.getService());
-        usernameView.setText(password.getUsername());
-        passwordView.setText(password.getPassword());
-        final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title(R.string.edit_password_title)
-                .customView(contentView, true)
-                .negativeText(android.R.string.cancel)
-                .positiveText(R.string.save)
-                .widgetColorRes(R.color.primary)
-                .negativeColorRes(R.color.primary)
-                .positiveColorRes(R.color.primary)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        password.setService(serviceView.getText().toString());
-                        password.setPassword(passwordView.getText().toString());
-                        String username = usernameView.getText().toString();
-                        password.setUsername(username.isEmpty() ? null : username);
-                        mAdapter.update(password);
-                    }
-                })
-                .build();
-        passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_NULL) {
-                    password.setService(serviceView.getText().toString());
-                    password.setPassword(passwordView.getText().toString());
-                    String username = usernameView.getText().toString();
-                    password.setUsername(username.isEmpty() ? null : username);
-                    mAdapter.update(password);
-                    dialog.dismiss();
-                    return true;
-                }
+            public boolean onMove(RecyclerView recyclerView, ViewHolder viewHolder, ViewHolder target) {
                 return false;
             }
-        });
-        dialog.show();
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //Remove swiped item from list and notify the RecyclerView
+                final int position = viewHolder.getAdapterPosition();
+                final Password password = mAdapter.hide(position);
+                final Snackbar snackbar = Snackbar
+                        .make(fab, "Password removed!", Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mAdapter.insert(password, position);
+                                Snackbar snackbar1 = Snackbar.make(fab, "Password restored!", Snackbar.LENGTH_SHORT);
+                                snackbar1.show();
+                            }
+                        })
+                        .setCallback(new Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                if (event != Callback.DISMISS_EVENT_ACTION && event != Callback.DISMISS_EVENT_CONSECUTIVE) {
+                                    mAdapter.delete(password);
+                                }
+                            }
+                        });
+
+                snackbar.show();
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(passwordList);
+
+        return rootView;
     }
 
     @Override
@@ -185,6 +156,18 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
             }
         });
         dialog.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPasswordKeeper.addChildEventListener(mAdapter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPasswordKeeper.removeEventListener(mAdapter);
     }
 
     public interface OnLogoutListener {

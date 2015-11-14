@@ -25,7 +25,6 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginListener, PasswordFragment.OnLogoutListener, Firebase.AuthResultHandler, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String FIREBASE_REPO = "passwordkeeper";
-    public static final String FIREBASE_WEBSITE = "https://" + FIREBASE_REPO + ".firebaseapp.com/";
     public static final String FIREBASE_URL = "https://" + FIREBASE_REPO + ".firebaseio.com/";
     public static final String FIREBASE = "FIREBASE";
     private static final int RC_GOOGLE_LOGIN = 1;
@@ -88,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         firebase.authWithOAuthToken("google", oAuthToken, this);
         Log.d("FPK", "onGoogleLoginWithToken");
     }
-
 
     @Override
     public void onLogout() {

@@ -56,15 +56,6 @@ public class LoginFragment extends Fragment {
         mProgressSpinner = rootView.findViewById(R.id.login_progress);
         View loginButton = rootView.findViewById(R.id.email_sign_in_button);
         mGoogleSignInButton = (SignInButton) rootView.findViewById(R.id.google_sign_in_button);
-        TextView signUpView = (TextView) rootView.findViewById(R.id.signUpTextView);
-        signUpView.setPaintFlags(signUpView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        Linkify.addLinks(signUpView, Linkify.ALL);
-        signUpView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signup();
-            }
-        });
         mEmailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -179,11 +170,6 @@ public class LoginFragment extends Fragment {
         mProgressSpinner.setVisibility(show ? View.VISIBLE : View.GONE);
         mLoginForm.setVisibility(show ? View.GONE : View.VISIBLE);
         mGoogleSignInButton.setVisibility(show ? View.GONE : View.VISIBLE);
-    }
-
-    public void signup() {
-        Intent signupIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.FIREBASE_WEBSITE));
-        startActivity(signupIntent);
     }
 
     private boolean isEmailValid(String email) {
