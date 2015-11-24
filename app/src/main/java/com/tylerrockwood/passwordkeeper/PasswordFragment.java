@@ -28,6 +28,7 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
     private Firebase mPasswordKeeper;
     private OnLogoutListener mListener;
     private PasswordAdapter mAdapter;
+    private Password mPendingDeletionPassword;
 
     public PasswordFragment() {
         // Required empty public constructor
@@ -69,13 +70,14 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
                 final int position = viewHolder.getAdapterPosition();
-                final Password password = mAdapter.hide(position);
+                mPendingDeletionPassword = mAdapter.hide(position);
                 final Snackbar snackbar = Snackbar
                         .make(fab, "Password removed!", Snackbar.LENGTH_LONG)
                         .setAction("UNDO", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                mAdapter.insert(password, position);
+                                mAdapter.insert(mPendingDeletionPassword, position);
+                                mPendingDeletionPassword = null;
                                 Snackbar snackbar1 = Snackbar.make(fab, "Password restored!", Snackbar.LENGTH_SHORT);
                                 snackbar1.show();
                             }
@@ -84,7 +86,8 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {
                                 if (event != Callback.DISMISS_EVENT_ACTION && event != Callback.DISMISS_EVENT_CONSECUTIVE) {
-                                    mAdapter.delete(password);
+                                    mAdapter.delete(mPendingDeletionPassword);
+                                    mPendingDeletionPassword = null;
                                 }
                             }
                         });
@@ -168,6 +171,9 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
     public void onPause() {
         super.onPause();
         mPasswordKeeper.removeEventListener(mAdapter);
+        if (mPendingDeletionPassword != null) {
+            mAdapter.delete(mPendingDeletionPassword);
+        }
     }
 
     public interface OnLogoutListener {

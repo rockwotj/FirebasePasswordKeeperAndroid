@@ -1,7 +1,6 @@
 package com.tylerrockwood.passwordkeeper;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,14 +14,16 @@ import com.firebase.client.FirebaseError;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginListener, PasswordFragment.OnLogoutListener, Firebase.AuthResultHandler, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginListener, PasswordFragment.OnLogoutListener, Firebase.AuthResultHandler, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String FIREBASE_REPO = "passwordkeeper";
     public static final String FIREBASE_URL = "https://" + FIREBASE_REPO + ".firebaseio.com/";
@@ -38,20 +39,28 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         if (savedInstanceState == null) {
             Firebase.setAndroidContext(this);
         }
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
                 .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         // Path doesn't matter for auth
         Firebase firebase = new Firebase(FIREBASE_URL);
-        if (firebase.getAuth() != null) {
+        AuthData authData = firebase.getAuth();
+        if (authData != null && isNotExpired(authData)) {
             // Done: Use uid for user's data
-            switchToPasswordFragment(FIREBASE_URL + "/users/" + firebase.getAuth().getUid());
+            switchToPasswordFragment(FIREBASE_URL + "/users/" + authData.getUid());
         } else {
             switchToLoginFragment();
         }
+    }
+
+    private boolean isNotExpired(AuthData authData) {
+        return authData.getExpires() > (System.currentTimeMillis() / 1000);
     }
 
     @Override
@@ -73,12 +82,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
 
     @Override
     public void onGoogleLogin() {
-        Log.d("FPK", "onGoogleLogin");
-        if (!mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.connect();
-        } else {
-            this.getGoogleOAuthToken();
-        }
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_GOOGLE_LOGIN);
     }
 
     private void onGoogleLogin(String oAuthToken) {
@@ -96,37 +101,20 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         switchToLoginFragment();
     }
 
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d("FPK", "onConnected");
-        getGoogleOAuthToken();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        //Do Nothing
-        Log.d("FPK", "onConnecitonSuspended");
-    }
-
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("FPK", "onConnectionFailed");
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, RC_GOOGLE_LOGIN);
-            } catch (IntentSender.SendIntentException e) {
-                mGoogleApiClient.connect();
-            }
-        }
+        Log.e("FPK", connectionResult.toString());
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_GOOGLE_LOGIN && resultCode == RESULT_OK) {
-            mGoogleApiClient.connect();
-        } else if (requestCode == RC_GOOGLE_LOGIN) {
-            showLoginError("You must accept the consent screen!");
+        if (requestCode == RC_GOOGLE_LOGIN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                GoogleSignInAccount acct = result.getSignInAccount();
+                String emailAddress = acct.getEmail();
+                getGoogleOAuthToken(emailAddress);
+            }
         }
     }
 
@@ -152,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         loginFragment.onLoginError(message);
     }
 
-    private void getGoogleOAuthToken() {
+    private void getGoogleOAuthToken(final String emailAddress) {
         Log.d("FPK", "getOAuth");
         AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
             String errorMessage = null;
@@ -161,8 +149,8 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
             protected String doInBackground(Void... params) {
                 String token = null;
                 try {
-                    String scope = String.format("oauth2:%s", Scopes.PLUS_LOGIN);
-                    token = GoogleAuthUtil.getToken(MainActivity.this, Plus.AccountApi.getAccountName(mGoogleApiClient), scope);
+                    String scope = "oauth2:profile email";
+                    token = GoogleAuthUtil.getToken(MainActivity.this, emailAddress, scope);
                 } catch (IOException transientEx) {
                     /* Network or server error */
                     errorMessage = "Network error: " + transientEx.getMessage();
