@@ -10,7 +10,7 @@ import com.firebase.client.Firebase;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginListener, PasswordFragment.OnLogoutListener {
 
-    public static final String FIREBASE_REPO = "passwordkeeper";
+    public static final String FIREBASE_REPO = "<YOUR USERNAME HERE>-passwordkeeper";
     public static final String FIREBASE_URL = "https://" + FIREBASE_REPO + ".firebaseio.com/";
     public static final String FIREBASE = "FIREBASE";
 
