@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 
 
@@ -63,5 +64,9 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
     private void showLoginError(String message) {
         LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag("Login");
         loginFragment.onLoginError(message);
+    }
+
+    private boolean isNotExpired(AuthData authData) {
+        return authData.getExpires() > (System.currentTimeMillis() / 1000);
     }
 }
