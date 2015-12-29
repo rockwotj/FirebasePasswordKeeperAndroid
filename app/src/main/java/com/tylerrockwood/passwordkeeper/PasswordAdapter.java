@@ -99,6 +99,10 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
         return null;
     }
 
+    public void clear() {
+        mPasswords.clear();
+    }
+
     public Password get(int position) {
         return mPasswords.get(position);
     }

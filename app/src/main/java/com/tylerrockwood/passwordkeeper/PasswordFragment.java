@@ -171,6 +171,7 @@ public class PasswordFragment extends Fragment implements Toolbar.OnMenuItemClic
     @Override
     public void onResume() {
         super.onResume();
+        mAdapter.clear();
         mPasswordKeeper.addChildEventListener(mAdapter);
     }
 
