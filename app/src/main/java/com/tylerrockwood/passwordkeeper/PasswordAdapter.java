@@ -109,6 +109,7 @@ public class PasswordAdapter extends RecyclerView.Adapter<PasswordAdapter.Passwo
         if (key.equals("users")) return;
         Password pw = dataSnapshot.getValue(Password.class);
         pw.setKey(key);
+        if (mPasswords.contains(pw)) return;
         mPasswords.add(0, pw);
         notifyItemInserted(0);
     }

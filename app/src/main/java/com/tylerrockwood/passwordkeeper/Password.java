@@ -55,4 +55,13 @@ public class Password {
     public void setKey(String key) {
         this.key = key;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Password) {
+            return ((Password)o).getKey().equals(key);
+        }
+        return false;
+    }
+
 }
