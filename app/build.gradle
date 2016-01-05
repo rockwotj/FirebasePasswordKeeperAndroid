@@ -10,7 +10,6 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
     }
     buildTypes {
         debug {
@@ -44,5 +43,4 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.+'
     compile 'com.android.support:recyclerview-v7:23.1.+'
     compile 'com.android.support:design:23.1.+'
-    compile 'com.android.support:multidex:1.0.0'
 }
