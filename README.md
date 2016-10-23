@@ -1,3 +1,7 @@
+# OUTDATED
+
+Checkout http://www.rosebotics.org/courses if you're interested, all this content has been merged into courses at Rose-Hulman
+
 # FirebasePasswordKeeperAndroid
 Authentication example with Firebase &amp; Android
 
